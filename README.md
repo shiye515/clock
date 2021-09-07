@@ -1,8 +1,8 @@
-# app
+# 环形时钟
 
 ## create project
 
-- flutter create --org=com.shibushiyaoshangtian --project-name app clock
+- flutter create --org=com.上天 --project-name app clock
 ## start dev
 
 - flutter run -d macOS
