@@ -1,7 +1,7 @@
 name: app
 description: 一个时钟应用
 publish_to: "none"
-version: 1.0.0+2
+version: 1.0.1+1
 
 environment:
   sdk: ">=2.12.0 <3.0.0"
@@ -34,4 +34,4 @@ flutter:
 flutter_icons:
   android: true
   ios: true
-  image_path: "assets/logo.jpeg"
+  image_path: "assets/icon.png"

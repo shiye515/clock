@@ -1,7 +1,6 @@
-import 'dart:math' show min;
+import 'package:app/passed_painter.dart';
+import 'package:app/second_painter.dart';
 import 'package:flutter/material.dart';
-import 'cross_painter.dart';
-import 'hand_painter.dart';
 
 void main() {
   runApp(MyApp());
@@ -32,18 +31,18 @@ class _MyHomePageState extends State<MyHomePage> {
   final hourLong = 1000 * 60 * 60;
   final halfDayLong = 1000 * 60 * 60 * 12;
   final colorGroups = [
+    [
+      Color(0xff0359ae),
+      Color(0xff14b09b),
+      Color(0xffebe5d9),
+      Color(0xffcc8a56)
+    ],
     // apple watch
     [
       Color(0xff000000),
       Color(0xfffa1554),
       Color(0xffb4ff00),
       Color(0xff00f7ee),
-    ],
-    [
-      Color(0xff0359ae),
-      Color(0xff14b09b),
-      Color(0xffebe5d9),
-      Color(0xffcc8a56)
     ],
     [
       Color(0xff181b46),
@@ -93,80 +92,68 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final screen = MediaQuery.of(context).size;
-    final strokeWidth = min(screen.width, screen.height) / 10;
-
     var colors = colorGroups[colorIndex];
-
+    final size = MediaQuery.of(context).size;
     return Scaffold(
-      body: Material(
-        color: colors[0],
-        child: InkWell(
-          onTap: () {
-            setState(() {
-              colorIndex = (colorIndex + 1) % colorGroups.length;
-            });
+      body: StreamBuilder<DateTime>(
+        initialData: DateTime.now(),
+        stream: Stream.periodic(
+          Duration(milliseconds: 1),
+          (i) {
+            return DateTime.now();
           },
-          child: StreamBuilder<DateTime>(
-            initialData: DateTime.now(),
-            stream: Stream.periodic(
-              Duration(milliseconds: 1),
-              (i) {
-                return DateTime.now();
-              },
-            ),
-            builder: (ctx, v) {
-              DateTime current = v.data!;
-              var startOfDay = DateTime(
-                  current.year, current.month, current.day, 0, 0, 0, 0, 0);
-
-              var ms = current.millisecondsSinceEpoch -
-                  startOfDay.millisecondsSinceEpoch;
-              return Stack(
-                children: [
-                  Container(
-                    width: double.infinity,
-                    height: double.infinity,
-                  ),
-                  CustomPaint(
-                    // painter: HandPainter(
-                    //   context: ctx,
-                    //   color: Colors.white,
-                    //   alpha: 100,
-                    //   rectWidth: strokeWidth * 9,
-                    //   strokeWidth: strokeWidth,
-                    //   progress: (ms % secondLong) / secondLong,
-                    // ),
-                    painter: CrossPainter(context: ctx),
-                    foregroundPainter: HandPainter(
-                      context: ctx,
-                      color: colors[1],
-                      rectWidth: strokeWidth * 9,
-                      strokeWidth: strokeWidth,
-                      progress: (ms % minuteLong) / minuteLong,
-                    ),
-                  ),
-                  CustomPaint(
-                    painter: HandPainter(
-                      context: ctx,
-                      color: colors[2],
-                      rectWidth: strokeWidth * 7,
-                      strokeWidth: strokeWidth,
-                      progress: (ms % hourLong) / hourLong,
-                    ),
-                    foregroundPainter: HandPainter(
-                      context: ctx,
-                      color: colors[3],
-                      rectWidth: strokeWidth * 5,
-                      strokeWidth: strokeWidth,
-                      progress: (ms % halfDayLong) / halfDayLong,
-                    ),
-                  ),
-                ],
-              );
-            },
-          ),
         ),
+        builder: (ctx, v) {
+          DateTime current = v.data!;
+          var startOfDay =
+              DateTime(current.year, current.month, current.day, 0, 0, 0, 0, 0);
+
+          var ms = current.millisecondsSinceEpoch -
+              startOfDay.millisecondsSinceEpoch;
+          return Stack(
+            children: [
+              Container(
+                width: double.infinity,
+                height: double.infinity,
+                color: colors[0],
+              ),
+              Positioned(
+                left: 0,
+                right: 0,
+                top: 0,
+                bottom: size.width / 9 * 10,
+                child: Container(
+                  color: colors[1],
+                ),
+              ),
+              Container(
+                width: double.infinity,
+                height: double.infinity,
+                child: CustomPaint(
+                  painter: PassedPainter(
+                    length: ms,
+                    color: colors[2],
+                  ),
+                  foregroundPainter: SecondPainter(
+                    length: ms,
+                    color: colors[3],
+                  ),
+                ),
+              ),
+              Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: () {
+                    setState(() {
+                      colorIndex = (colorIndex + 1) % colorGroups.length;
+                    });
+                  },
+                  child: Container(),
+                ),
+              ),
+            ],
+          );
+        },
       ),
     );
   }
