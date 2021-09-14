@@ -1,8 +1,11 @@
 import 'package:app/passed_painter.dart';
 import 'package:app/second_painter.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await SystemChrome.setEnabledSystemUIMode(SystemUiMode.leanBack);
   runApp(MyApp());
 }
 
@@ -31,18 +34,18 @@ class _MyHomePageState extends State<MyHomePage> {
   final hourLong = 1000 * 60 * 60;
   final halfDayLong = 1000 * 60 * 60 * 12;
   final colorGroups = [
-    [
-      Color(0xff0359ae),
-      Color(0xff14b09b),
-      Color(0xffebe5d9),
-      Color(0xffcc8a56)
-    ],
     // apple watch
     [
       Color(0xff000000),
       Color(0xfffa1554),
       Color(0xffb4ff00),
       Color(0xff00f7ee),
+    ],
+    [
+      Color(0xff0359ae),
+      Color(0xff14b09b),
+      Color(0xffebe5d9),
+      Color(0xffcc8a56)
     ],
     [
       Color(0xff181b46),
@@ -94,6 +97,12 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     var colors = colorGroups[colorIndex];
     final size = MediaQuery.of(context).size;
+    double radio;
+    if (size.aspectRatio < 0.6) {
+      radio = 40 / 36;
+    } else {
+      radio = 24 / 60;
+    }
     return Scaffold(
       body: StreamBuilder<DateTime>(
         initialData: DateTime.now(),
@@ -121,7 +130,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 left: 0,
                 right: 0,
                 top: 0,
-                bottom: size.width / 9 * 10,
+                bottom: size.width * radio,
                 child: Container(
                   color: colors[1],
                 ),

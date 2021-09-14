@@ -19,12 +19,13 @@ class PassedPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    var cellWidth = size.width / 36;
+    int rowCount = (size.height > size.width) ? 36 : 60;
+    var cellWidth = size.width / rowCount;
     var paintWidth = cellWidth * 0.94;
     // print('passed $length');
     for (var i = 0; i < length; i++) {
-      var offsetTop = size.height - cellWidth / 2 - cellWidth * (i ~/ 36);
-      var offsetLeft = cellWidth * (i % 36) + cellWidth / 2;
+      var offsetTop = size.height - cellWidth / 2 - cellWidth * (i ~/ rowCount);
+      var offsetLeft = cellWidth * (i % rowCount) + cellWidth / 2;
 
       canvas.drawRect(
         Rect.fromCenter(

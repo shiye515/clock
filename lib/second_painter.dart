@@ -18,12 +18,15 @@ class SecondPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    var cellWidth = size.width / 36;
+    int rowCount = (size.height > size.width) ? 36 : 60;
+    var cellWidth = size.width / rowCount;
     var paintWidth = cellWidth * 0.94;
     var progress = (length % 60000) / 60000;
-    var height = size.height - cellWidth / 2 - cellWidth * (length ~/ 2160000);
+    var height = size.height -
+        cellWidth / 2 -
+        cellWidth * (length ~/ (60000 * rowCount));
     var offsetTop = height * progress;
-    var offsetLeft = cellWidth / 2 + cellWidth * ((length ~/ 60000) % 36);
+    var offsetLeft = cellWidth / 2 + cellWidth * ((length ~/ 60000) % rowCount);
     canvas.drawRect(
       Rect.fromCenter(
         center: Offset(offsetLeft, offsetTop),
